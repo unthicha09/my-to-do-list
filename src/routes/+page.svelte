@@ -1,6 +1,7 @@
 <script>
   import { onMount } from "svelte";
-  import { fade } from "svelte/transition";
+  import { fade, slide, scale } from "svelte/transition";
+  import { Plus, Pencil, Trash2, Calendar, CheckCircle } from "lucide-svelte";
 
   let todos = [];
   let newTask = "";
@@ -31,7 +32,12 @@
 
   function addTask() {
     if (!newTask || !dueDate) return;
-    const newItem = { task: newTask, due: dueDate, done: false };
+    const newItem = {
+      task: newTask,
+      due: dueDate,
+      done: false,
+      category: getCategory(newTask),
+    };
     if (editIndex !== -1) {
       todos[editIndex] = newItem;
       todos = [...todos];
@@ -63,7 +69,53 @@
     dueDate = todos[index].due;
     editIndex = index;
   }
+  function getCategory(task) {
+    const text = task.toLowerCase();
 
+    if (
+      text.includes("อ่าน") ||
+      text.includes("การบ้าน") ||
+      text.includes("สอบ") ||
+      text.includes("เรียน")
+    ) {
+      return "📚 Study";
+    }
+
+    if (
+      text.includes("โค้ด") ||
+      text.includes("โปรเจก") ||
+      text.includes("portfolio") ||
+      text.includes("coding")
+    ) {
+      return "💻 Project";
+    }
+
+    if (
+      text.includes("วิ่ง") ||
+      text.includes("ฟิตเนส") ||
+      text.includes("ออกกำลังกาย")
+    ) {
+      return "💪 Health";
+    }
+
+    if (
+      text.includes("ล้าง") ||
+      text.includes("ซัก") ||
+      text.includes("ทำความสะอาด")
+    ) {
+      return "🧹 Chores";
+    }
+
+    if (
+      text.includes("ซื้อ") ||
+      text.includes("ธุระ") ||
+      text.includes("นัด")
+    ) {
+      return "🏠 Personal";
+    }
+
+    return "📌 Other";
+  }
   function checkNotifications() {
     if (Notification.permission !== "granted") {
       Notification.requestPermission();
@@ -79,42 +131,77 @@
       }
     });
   }
+  function getCategoryEmoji(category) {
+    if (!category) return "📌";
+
+    if (category.includes("Study")) return "📚";
+    if (category.includes("Project")) return "💻";
+    if (category.includes("Health")) return "💪";
+    if (category.includes("Chores")) return "🧹";
+    if (category.includes("Personal")) return "🏠";
+
+    return "📌";
+  }
 </script>
 
 <div class="todo-container">
   <h1>📝 My To-Do List</h1>
 
   <div class="input-group">
-    <input bind:value={newTask} placeholder="✏️ ชื่องาน" />
-    <input type="date" bind:value={dueDate} />
+    <input bind:value={newTask} placeholder="Task name..." />
+
+    <div class="date-input">
+      <Calendar size="18" />
+      <input type="date" bind:value={dueDate} />
+    </div>
+
     <button on:click={addTask} class:edit-mode={editIndex !== -1}>
-      {editIndex !== -1 ? "📝 แก้ไขงาน" : "➕ เพิ่มงาน"}
+      {#if editIndex !== -1}
+        <Pencil size="18" /> Edit Task
+      {:else}
+        <Plus size="18" /> Add Task
+      {/if}
     </button>
   </div>
 
   <ul>
     {#each notDone as t, i (i)}
-      <li in:fade={{ duration: 300 }}>
+      <li in:slide={{ duration: 250 }} class="task-card">
         <input
           type="checkbox"
           checked={t.done}
           on:change={() => toggleDone(todos.indexOf(t))}
         />
+
         <div class="task-text-container">
           <span class:done={t.done} class="task-text">
-            🌟 {t.task}
+            {t.task}
           </span>
-          <span class="due-date">📅 {t.due}</span>
+
+          <span class="due-date">
+            <Calendar size="14" />
+            {t.due}
+          </span>
+
+          <span class="category">
+            {t.category}
+          </span>
         </div>
+
         <div class="buttons">
           <button
-            class="edit-button"
-            on:click={() => editTask(todos.indexOf(t))}>แก้ไข</button
+            class="icon-btn edit"
+            on:click={() => editTask(todos.indexOf(t))}
           >
+            <Pencil size="16" />
+          </button>
+
           <button
-            class="delete-button"
-            on:click={() => deleteTask(todos.indexOf(t))}>ลบ</button
+            class="icon-btn delete"
+            on:click={() => deleteTask(todos.indexOf(t))}
           >
+            <Trash2 size="16" />
+          </button>
         </div>
       </li>
     {/each}
@@ -135,6 +222,7 @@
               🌟 {t.task}
             </span>
             <span class="due-date">📅 {t.due}</span>
+            <span class="category">{t.category}</span>
           </div>
           <div class="buttons">
             <button
@@ -159,55 +247,42 @@
 <style>
   :global(body) {
     font-family: "Noto Sans Thai", sans-serif;
-    background: linear-gradient(to right, #fdfbfb, #ebedee);
+    background: linear-gradient(135deg, #eef2ff, #f8fafc);
     margin: 0;
     padding: 0;
   }
 
+  .todo-container {
+    width: 100%;
+    max-width: 1000px; /* หรือจะลบออกเลยก็ได้ */
+    margin: auto;
+    padding: 40px 20px;
+  }
   h1 {
     text-align: center;
-    color: #3b82f6;
-    margin-bottom: 16px;
+    color: #2563eb;
+    font-weight: 700;
+    margin-bottom: 30px;
   }
 
-  .todo-container {
-    max-width: 100vw;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 24px;
-    box-sizing: border-box;
-    background-color: white;
-    overflow-y: auto;
-    scrollbar-width: none; /* สำหรับ Firefox */
-    -ms-overflow-style: none; /* สำหรับ IE และ Edge */
-  }
-
-  .todo-container::-webkit-scrollbar {
-    display: none; /* สำหรับ Chrome, Safari และ Opera */
-  }
+  /* input */
 
   .input-group {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    align-items: center;
-    margin-bottom: 20px;
-    width: 100%;
+    margin-bottom: 30px;
   }
 
   .input-group input,
   .input-group button {
     padding: 12px;
-    font-size: 16px;
-    border-radius: 12px;
+    font-size: 15px;
+    border-radius: 10px;
     border: 1px solid #ddd;
     width: 100%;
-    max-width: 400px;
     box-sizing: border-box;
-    transition: all 0.2s ease;
+    transition: 0.2s;
   }
 
   .input-group input:focus {
@@ -217,7 +292,7 @@
   }
 
   .input-group button {
-    background: #3b82f6;
+    background: #2563eb;
     color: white;
     border: none;
     font-weight: 500;
@@ -225,8 +300,9 @@
   }
 
   .input-group button:hover {
-    background: #2563eb;
-    transform: scale(1.02);
+    transform: translateY(-2px);
+    background: #1d4ed8;
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
   }
 
   .input-group button.edit-mode {
@@ -234,26 +310,31 @@
     color: #333;
   }
 
-  .input-group button.edit-mode:hover {
-    background-color: #fbbf24;
-  }
+  /* list */
 
   ul {
     list-style: none;
     padding: 0;
     width: 100%;
-    max-width: 600px;
   }
 
   li {
     display: flex;
     align-items: flex-start;
-    background-color: #e0f7fa;
-    border-radius: 12px;
+    background-color: white;
+    border-radius: 14px;
     padding: 14px;
     margin-bottom: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    transition: 0.2s;
   }
+
+  li:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+  }
+
+  /* task */
 
   .task-text-container {
     display: flex;
@@ -270,14 +351,16 @@
 
   .task-text.done {
     text-decoration: line-through;
-    color: #aaa;
+    color: #9ca3af;
   }
 
   .due-date {
-    font-size: 14px;
-    color: #666;
+    font-size: 13px;
+    color: #6b7280;
     margin-top: 4px;
   }
+
+  /* buttons */
 
   .buttons {
     display: flex;
@@ -294,45 +377,58 @@
   }
 
   .edit-button {
-    background-color: #60a5fa;
+    background-color: #3b82f6;
     color: white;
   }
 
   .delete-button {
-    background-color: #f87171;
+    background-color: #ef4444;
     color: white;
   }
 
   .edit-button:hover {
-    background-color: #3b82f6;
+    transform: scale(1.05);
+    background-color: #2563eb;
   }
 
   .delete-button:hover {
-    background-color: #ef4444;
+    transform: scale(1.05);
+    background-color: #dc2626;
   }
+
+  /* toast */
 
   .toast {
     position: fixed;
-    bottom: 20px;
+    bottom: 25px;
     left: 50%;
     transform: translateX(-50%);
-    background: #333;
+    background: #111827;
     color: white;
-    padding: 12px 24px;
+    padding: 12px 22px;
     border-radius: 999px;
     font-size: 14px;
-    opacity: 0.9;
-    z-index: 1000;
+    opacity: 0.95;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    animation: toastPop 0.3s ease;
   }
+
+  @keyframes toastPop {
+    from {
+      transform: translate(-50%, 20px);
+      opacity: 0;
+    }
+    to {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+  }
+
+  /* responsive */
 
   @media (max-width: 600px) {
     .todo-container {
       margin: 20px;
-    }
-
-    .input-group input,
-    .input-group button {
-      max-width: 100%;
     }
 
     li {
@@ -343,5 +439,15 @@
     .buttons {
       margin-top: 10px;
     }
+  }
+
+  .category {
+    font-size: 12px;
+    background: #e0e7ff;
+    color: #3730a3;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-top: 4px;
+    display: inline-block;
   }
 </style>
