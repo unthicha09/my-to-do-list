@@ -8,6 +8,17 @@
 
   // ดึงข้อมูล Todos ที่บันทึกใน LocalStorage
   let todos = [];
+  function getCategoryEmoji(category) {
+    if (!category) return "📌";
+
+    if (category.includes("Study")) return "📚";
+    if (category.includes("Project")) return "💻";
+    if (category.includes("Health")) return "💪";
+    if (category.includes("Chores")) return "🧹";
+    if (category.includes("Personal")) return "🏠";
+
+    return "📌";
+  }
   onMount(() => {
     const saved = localStorage.getItem("todos");
     if (saved) {
@@ -23,11 +34,11 @@
       plugins: [dayGridPlugin, interactionPlugin],
       initialView: "dayGridMonth",
       events: todos.map((todo) => ({
-        title: todo.task,
+        title: `${getCategoryEmoji(todo.category)} ${todo.task}`,
         date: todo.due,
-        backgroundColor: "#7EC8E3", // สีฟ้าอ่อนสำหรับกิจกรรม
-        borderColor: "#7EC8E3", // กรอบสีเดียวกับพื้นหลัง
-        textColor: "#333", // สีตัวอักษร
+        backgroundColor: "#7EC8E3",
+        borderColor: "#7EC8E3",
+        textColor: "#333",
       })),
       dateClick: (info) => {
         alert("You clicked on " + info.dateStr);
