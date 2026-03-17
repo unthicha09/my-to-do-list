@@ -142,6 +142,16 @@
 
     return "📌";
   }
+  $: currentMonth = new Date().getMonth();
+  $: currentYear = new Date().getFullYear();
+
+  $: monthlyTodos = todos.filter((t) => {
+    const d = new Date(t.due);
+    return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+  });
+  $: monthlyDone = monthlyTodos.filter((t) => t.done).length;
+  $: monthlyTotal = monthlyTodos.length;
+  $: categories = [...new Set(monthlyTodos.map((t) => t.category))];
 </script>
 
 <div class="todo-container">
@@ -162,48 +172,68 @@
         <Plus size="18" /> Add Task
       {/if}
     </button>
+    <h3 class="month-title">
+      📅 {new Date().toLocaleString("th-TH", {
+        month: "long",
+        year: "numeric",
+      })}
+    </h3>
+
+    <p class="progress-text">
+      ทำไปแล้ว {monthlyDone}/{monthlyTotal} งาน
+    </p>
+
+    <div class="progress">
+      <div
+        class="bar"
+        style="width: {monthlyTotal ? (monthlyDone / monthlyTotal) * 100 : 0}%"
+      ></div>
+    </div>
   </div>
 
   <ul>
-    {#each notDone as t, i (i)}
-      <li in:slide={{ duration: 250 }} class="task-card">
-        <input
-          type="checkbox"
-          checked={t.done}
-          on:change={() => toggleDone(todos.indexOf(t))}
-        />
+    {#each categories as cat}
+      <h4 class="category-title">{cat}</h4>
 
-        <div class="task-text-container">
-          <span class:done={t.done} class="task-text">
-            {t.task}
-          </span>
+      <ul>
+        {#each monthlyTodos.filter((t) => !t.done && t.category === cat) as t, i}
+          <li class="task-card">
+            <label class="custom-checkbox">
+              <input
+                type="checkbox"
+                checked={t.done}
+                on:change={() => toggleDone(todos.indexOf(t))}
+              />
+              <span class="checkmark"></span>
+            </label>
 
-          <span class="due-date">
-            <Calendar size="14" />
-            {t.due}
-          </span>
+            <div class="task-text-container">
+              <span class="task-text">{t.task}</span>
 
-          <span class="category">
-            {t.category}
-          </span>
-        </div>
+              <span class="due-date">
+                <Calendar size="14" />
+                {t.due}
+              </span>
+            </div>
 
-        <div class="buttons">
-          <button
-            class="icon-btn edit"
-            on:click={() => editTask(todos.indexOf(t))}
-          >
-            <Pencil size="16" />
-          </button>
+            <div class="buttons">
+              <button
+                class="icon-btn edit"
+                on:click={() => editTask(todos.indexOf(t))}
+              >
+                <Pencil size="16" />
+              </button>
 
-          <button
-            class="icon-btn delete"
-            on:click={() => deleteTask(todos.indexOf(t))}
-          >
-            <Trash2 size="16" />
-          </button>
-        </div>
-      </li>
+              <button
+                class="icon-btn delete"
+                on:click={() => deleteTask(todos.indexOf(t))}
+              >
+                <Trash2 size="16" />
+              </button>
+            </div>
+          </li>
+        {/each}
+      </ul>
     {/each}
   </ul>
 
@@ -465,5 +495,89 @@
     100% {
       background-position: 0% 50%;
     }
+  }
+
+  /* บาร์ */
+  .month-title {
+    margin-top: 10px;
+    color: #2563eb;
+    text-align: center;
+  }
+
+  .progress-text {
+    text-align: center;
+    font-size: 14px;
+    color: #64748b;
+  }
+
+  .progress {
+    background: #e2e8f0;
+    border-radius: 10px;
+    height: 8px;
+    margin: 10px auto 20px;
+    width: 60%;
+  }
+
+  .bar {
+    background: #60a5fa;
+    height: 100%;
+    border-radius: 10px;
+    transition: 0.3s;
+  }
+  .category-title {
+    margin-top: 20px;
+    color: #3b82f6;
+    font-size: 15px;
+  }
+  /* checkbox วงกลม */
+  .custom-checkbox input {
+    display: none;
+  }
+
+  .checkmark {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #60a5fa;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+  }
+
+  .custom-checkbox input:checked + .checkmark {
+    background: #60a5fa;
+  }
+
+  .custom-checkbox input:checked + .checkmark::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 6px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  /* ปุ่มไอคอน */
+  .icon-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .icon-btn.edit {
+    color: #facc15;
+  }
+
+  .icon-btn.delete {
+    color: #ef4444;
+  }
+
+  /* fix การ์ด */
+  .task-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 </style>
