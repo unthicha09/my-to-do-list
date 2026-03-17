@@ -1,38 +1,35 @@
-# sv
+# 📝 My To-Do List App
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+เว็บจัดการงาน (To-Do List) แบบรายเดือน ที่ช่วยให้ติดตามงานได้ง่าย พร้อมแสดงความคืบหน้า และแยกหมวดหมู่อัตโนมัติ
 
-## Creating a project
+## 🚀 Demo
 
-If you're seeing this, you've probably already done this step. Congrats!
+👉 https://my-to-do-list-pi-sand.vercel.app/
 
+## ✨ Features
+
+* ✅ เพิ่ม / แก้ไข / ลบ งาน
+* 📅 กำหนดวัน (Due Date)
+* 📊 แสดง Progress รายเดือน
+* 📂 แยกหมวดหมู่อัตโนมัติ (Study, Project, Health ฯลฯ)
+* 🔔 แจ้งเตือนงานใกล้ครบกำหนด
+* 💾 บันทึกข้อมูลด้วย Local Storage
+
+## 🛠️ Tech Stack
+
+* Svelte
+* JavaScript
+* HTML / CSS
+* Local Storage
+
+## 👩‍💻 About This Project
+
+โปรเจกนี้พัฒนาขึ้นเพื่อฝึกการสร้างเว็บแอปด้วย Svelte
+โดยเน้นการจัดการ state, การออกแบบ UI/UX และการใช้งาน Local Storage
+รวมถึงการแสดงข้อมูลแบบรายเดือนเพื่อช่วยวางแผนงานได้ดีขึ้น
+
+## 📦 Installation
 ```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
+npm install
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
