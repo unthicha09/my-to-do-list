@@ -247,7 +247,9 @@
 <style>
   :global(body) {
     font-family: "Noto Sans Thai", sans-serif;
-    background: linear-gradient(135deg, #eef2ff, #f8fafc);
+    background: linear-gradient(-45deg, #ffffff, #f0f9ff, #e0f2fe, #f8fafc);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
     margin: 0;
     padding: 0;
   }
@@ -274,35 +276,36 @@
     margin-bottom: 30px;
   }
 
-  .input-group input,
-  .input-group button {
+  .input-group input {
     padding: 12px;
     font-size: 15px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
     width: 100%;
-    box-sizing: border-box;
-    transition: 0.2s;
+    background: #ffffff;
+    transition: all 0.2s;
   }
-
   .input-group input:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.2);
   }
 
   .input-group button {
-    background: #2563eb;
+    background: #60a5fa; /* ฟ้าอ่อน */
     color: white;
     border: none;
+    border-radius: 6px; /* 👈 เหลี่ยมขึ้น */
+    padding: 10px;
     font-weight: 500;
     cursor: pointer;
+    transition: 0.2s;
+    width: fit-content; /* 👈 ให้กว้างตามข้อความ */
+    align-self: center;
   }
-
   .input-group button:hover {
-    transform: translateY(-2px);
-    background: #1d4ed8;
-    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);
   }
 
   .input-group button.edit-mode {
@@ -321,17 +324,18 @@
   li {
     display: flex;
     align-items: flex-start;
-    background-color: white;
-    border-radius: 14px;
-    padding: 14px;
-    margin-bottom: 12px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-    transition: 0.2s;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    transition: all 0.25s ease;
+    border: 1px solid #eef2ff;
   }
 
   li:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 10px 28px rgba(37, 99, 235, 0.15);
   }
 
   /* task */
@@ -449,5 +453,17 @@
     border-radius: 6px;
     margin-top: 4px;
     display: inline-block;
+  }
+
+  @keyframes gradientBG {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
 </style>
