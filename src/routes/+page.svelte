@@ -197,7 +197,7 @@
 
       <ul>
         {#each monthlyTodos.filter((t) => !t.done && t.category === cat) as t, i}
-          <li class="task-card">
+          <li class="task-card {t.done ? 'done' : ''}">
             <label class="custom-checkbox">
               <input
                 type="checkbox"
@@ -208,7 +208,9 @@
             </label>
 
             <div class="task-text-container">
-              <span class="task-text">{t.task}</span>
+              <span class="task-text {t.done ? 'line' : ''}">
+                {t.task}
+              </span>
 
               <span class="due-date">
                 <Calendar size="14" />
@@ -241,28 +243,42 @@
     <h3 style="color:#888; margin-top: 24px;">✅ งานที่ทำแล้ว</h3>
     <ul>
       {#each done as t, i (i)}
-        <li in:fade={{ duration: 300 }}>
-          <input
-            type="checkbox"
-            checked={t.done}
-            on:change={() => toggleDone(todos.indexOf(t))}
-          />
+        <li class="task-card done">
+          <!-- checkbox วงกลม -->
+          <label class="custom-checkbox">
+            <input
+              type="checkbox"
+              checked={t.done}
+              on:change={() => toggleDone(todos.indexOf(t))}
+            />
+            <span class="checkmark"></span>
+          </label>
+
+          <!-- text -->
           <div class="task-text-container">
-            <span class:done={t.done} class="task-text">
+            <span class="task-text line">
               🌟 {t.task}
             </span>
+
             <span class="due-date">📅 {t.due}</span>
             <span class="category">{t.category}</span>
           </div>
+
+          <!-- ปุ่มไอคอน -->
           <div class="buttons">
             <button
-              class="edit-button"
-              on:click={() => editTask(todos.indexOf(t))}>แก้ไข</button
+              class="icon-btn edit"
+              on:click={() => editTask(todos.indexOf(t))}
             >
+              ✏️
+            </button>
+
             <button
-              class="delete-button"
-              on:click={() => deleteTask(todos.indexOf(t))}>ลบ</button
+              class="icon-btn delete"
+              on:click={() => deleteTask(todos.indexOf(t))}
             >
+              🗑️
+            </button>
           </div>
         </li>
       {/each}
@@ -579,5 +595,25 @@
     display: flex;
     align-items: center;
     gap: 10px;
+  }
+  /* ✅ ตอนทำเสร็จแล้วทั้งการ์ด */
+  .task-card.done {
+    opacity: 0.6;
+    background: #f1f5f9;
+  }
+
+  /* ขีดฆ่าข้อความ */
+  .task-text.line {
+    text-decoration: line-through;
+    color: #94a3b8;
+  }
+
+  /* ปุ่มตอน done แล้ว */
+  .task-card.done .icon-btn.edit {
+    color: #cbd5f5; /* จางลง */
+  }
+
+  .task-card.done .icon-btn.delete {
+    color: #fca5a5; /* แดงอ่อน */
   }
 </style>
