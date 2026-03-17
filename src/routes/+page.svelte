@@ -33,6 +33,7 @@
   function addTask() {
     if (!newTask || !dueDate) return;
     const newItem = {
+      id: Date.now(),
       task: newTask,
       due: dueDate,
       done: false,
@@ -83,9 +84,10 @@
 
     if (
       text.includes("โค้ด") ||
-      text.includes("โปรเจก") ||
+      text.includes("ทำโปรเจก") ||
       text.includes("portfolio") ||
-      text.includes("coding")
+      text.includes("coding") ||
+      text.includes("ทำงาน")
     ) {
       return "💻 Project";
     }
@@ -101,6 +103,9 @@
     if (
       text.includes("ล้าง") ||
       text.includes("ซัก") ||
+      text.includes("ถู") ||
+      text.includes("กวาด") ||
+      text.includes("เช็ด") ||
       text.includes("ทำความสะอาด")
     ) {
       return "🧹 Chores";
@@ -196,7 +201,7 @@
       <h4 class="category-title">{cat}</h4>
 
       <ul>
-        {#each monthlyTodos.filter((t) => !t.done && t.category === cat) as t, i}
+        {#each monthlyTodos.filter((t) => !t.done && t.category === cat) as t (t)}
           <li class="task-card {t.done ? 'done' : ''}">
             <label class="custom-checkbox">
               <input
@@ -242,7 +247,7 @@
   {#if done.length > 0}
     <h3 style="color:#888; margin-top: 24px;">✅ งานที่ทำแล้ว</h3>
     <ul>
-      {#each done as t, i (i)}
+      {#each done as t (t)}
         <li class="task-card done">
           <!-- checkbox วงกลม -->
           <label class="custom-checkbox">
